@@ -4,11 +4,6 @@ import { useWarehouseSimulation } from '../hooks/useWarehouseSimulation';
 
 export const ForkliftManager: React.FC = () => {
   const { state, addForklift, updateForklift, removeForklift } = useWarehouseSimulation();
-  /*const simulatedForklifts = state.forklifts.map(f => ({
-  ...f,
-  isLoggedIn: f.id === 'forklift-1' ? true : f.isLoggedIn
-}));*/
-
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingForklift, setEditingForklift] = useState<string | null>(null);
   const [formData, setFormData] = useState({
