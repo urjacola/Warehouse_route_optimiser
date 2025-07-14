@@ -116,7 +116,8 @@ export const generateMultipleForklifts = (count: number, grid: Cell[][]): Forkli
   ];
   
   const capacities = [1000, 1200, 800, 1500, 1000]; // Different forklift capacities
-  const statusArray = ['idle', 'moving', 'picking', 'carrying', 'dropping'] as const;
+  const statusArray = ['picking', 'carrying', 'dropping', 'idle', 'moving' ] as const;
+  const fuelLvlArr = [88, 73, 51, 100, 93 ]
   for (let i = 0; i < count; i++) {
     const position = startingPositions[i % startingPositions.length];
     forklifts.push({
@@ -124,7 +125,7 @@ export const generateMultipleForklifts = (count: number, grid: Cell[][]): Forkli
       operatorName: operators[i % operators.length],
       position: { ...position },
       currentTask: null,
-      fuelLevel: 100,
+      fuelLevel: fuelLvlArr[i %fuelLvlArr.length],
       capacity: capacities[i % capacities.length],
       currentLoad: 0,
       status: statusArray[i % statusArray.length],
