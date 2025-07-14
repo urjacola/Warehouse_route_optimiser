@@ -4,10 +4,10 @@ import { useWarehouseSimulation } from '../hooks/useWarehouseSimulation';
 
 export const ForkliftManager: React.FC = () => {
   const { state, addForklift, updateForklift, removeForklift } = useWarehouseSimulation();
-  const simulatedForklifts = state.forklifts.map(f => ({
+  /*const simulatedForklifts = state.forklifts.map(f => ({
   ...f,
   isLoggedIn: f.id === 'forklift-1' ? true : f.isLoggedIn
-}));
+}));*/
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingForklift, setEditingForklift] = useState<string | null>(null);
@@ -162,7 +162,7 @@ export const ForkliftManager: React.FC = () => {
       )}
 
       <div className="space-y-2">
-        {simulated.forklifts.map((forklift) => (
+        {state.forklifts.map((forklift) => (
           <div key={forklift.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center space-x-3">
               <Truck className="w-4 h-4 text-blue-500" />
