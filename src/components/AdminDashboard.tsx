@@ -6,7 +6,7 @@ import { ManualTaskCreator } from './ManualTaskCreator';
 import { ForkliftManager } from './ForkliftManager';
 import { useWarehouseSimulation } from '../hooks/useWarehouseSimulation';
 import { useAuth } from '../contexts/AuthContext';
-import { Truck, Brain, TrendingUp, Users, Shield, LogOut, Monitor } from 'lucide-react';
+import { Truck, Brain, TrendingUp, Users, Shield, LogOut, Monitor, Package } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { user, logout } = useAuth();
@@ -27,6 +27,12 @@ export const AdminDashboard: React.FC = () => {
     removeShelf
   } = useWarehouseSimulation();
 
+  // 🔧 Simulate all forklifts as online
+  const simulatedForklifts = state.forklifts.map(f => ({
+    ...f,
+    isLoggedIn: true
+  }));
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -42,12 +48,12 @@ export const AdminDashboard: React.FC = () => {
                 <p className="text-purple-100 text-sm">Fleet Management & System Overview</p>
               </div>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-6">
               <div className="flex flex-wrap items-center gap-4 text-sm">
                 <div className="flex items-center space-x-2">
                   <Users className="w-4 h-4" />
-                  <span>{state.forklifts.filter(f => f.isLoggedIn).length}/{state.forklifts.length} Online</span>
+                  <span>{simulatedForklifts.filter(f => f.isLoggedIn).length}/{simulatedForklifts.length} Online</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Shield className="w-4 h-4" />
@@ -58,7 +64,7 @@ export const AdminDashboard: React.FC = () => {
                   <span>AI Optimizing</span>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <span className="text-sm">Welcome, {user?.name}</span>
                 <button
@@ -73,7 +79,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Main Content */}
       <div className="container mx-auto px-4 sm:px-6 py-6">
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
@@ -90,7 +96,7 @@ export const AdminDashboard: React.FC = () => {
               onAddObstacle={() => addObstacle({ x: 10, y: 8 })}
             />
           </div>
-          
+
           {/* Warehouse Grid */}
           <div className="xl:col-span-2 order-1 xl:order-2">
             <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
@@ -129,7 +135,6 @@ export const AdminDashboard: React.FC = () => {
                     state={state}
                     cellSize={10}
                     onCellClick={(position) => {
-                      // Right click to add shelf, left click to add obstacle
                       if (state.grid[position.y][position.x].type === 'empty') {
                         addShelf(position);
                       } else if (state.grid[position.y][position.x].type === 'shelf') {
@@ -146,7 +151,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Metrics Dashboard */}
           <div className="xl:col-span-1 order-2 xl:order-3 space-y-4">
             <MetricsDashboard
@@ -155,13 +160,13 @@ export const AdminDashboard: React.FC = () => {
               isRunning={isRunning}
               totalTime={totalTime}
             />
-            
+
             {/* Manual Task Creation */}
             <div className="bg-white p-4 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold mb-3">Create New Task</h3>
               <ManualTaskCreator onTaskCreate={addManualTask} />
             </div>
-            
+
             {/* Forklift Management */}
             <div className="bg-white p-4 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold mb-3">Fleet Management</h3>
@@ -169,12 +174,11 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Task Management */}
         <div className="mt-6 bg-white p-4 sm:p-6 rounded-lg shadow-md">
           <h2 className="text-lg sm:text-xl font-semibold mb-4">Task Assignment Overview</h2>
-          
-          {/* Task Assignment Summary */}
+
           <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-blue-50 p-4 rounded-lg">
               <div className="text-2xl font-bold text-blue-800">{state.tasks.filter(t => t.status === 'pending').length}</div>
@@ -189,11 +193,11 @@ export const AdminDashboard: React.FC = () => {
               <div className="text-sm text-green-600">Completed</div>
             </div>
             <div className="bg-purple-50 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-purple-800">{state.forklifts.filter(f => f.currentTask).length}</div>
+              <div className="text-2xl font-bold text-purple-800">{simulatedForklifts.filter(f => f.currentTask).length}</div>
               <div className="text-sm text-purple-600">Active Forklifts</div>
             </div>
           </div>
-          
+
           {/* Active Tasks with Forklift Assignments */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Current Task Assignments</h3>
@@ -212,13 +216,13 @@ export const AdminDashboard: React.FC = () => {
                       {task.status}
                     </div>
                   </div>
-                  
+
                   <div>
                     <div className="text-sm text-gray-600">Material</div>
                     <div className="font-medium">{task.material.name}</div>
                     <div className="text-xs text-gray-500">{task.material.weight}kg - {task.material.priority} priority</div>
                   </div>
-                  
+
                   <div>
                     <div className="text-sm text-gray-600">Route</div>
                     <div className="text-xs">
@@ -226,14 +230,14 @@ export const AdminDashboard: React.FC = () => {
                       <div>To: ({task.dropoffLocation.x}, {task.dropoffLocation.y})</div>
                     </div>
                   </div>
-                  
+
                   <div>
                     <div className="text-sm text-gray-600">Assignment</div>
                     {task.assignedForklift ? (
                       <div>
                         <div className="font-medium text-blue-600">{task.assignedForklift}</div>
                         <div className="text-xs text-gray-500">
-                          {state.forklifts.find(f => f.id === task.assignedForklift)?.operatorName || 'Unknown Operator'}
+                          {simulatedForklifts.find(f => f.id === task.assignedForklift)?.operatorName || 'Unknown Operator'}
                         </div>
                       </div>
                     ) : (
@@ -243,7 +247,7 @@ export const AdminDashboard: React.FC = () => {
                 </div>
               </div>
             ))}
-            
+
             {state.tasks.filter(task => task.status !== 'completed').length === 0 && (
               <div className="text-center py-8 text-gray-500">
                 <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
